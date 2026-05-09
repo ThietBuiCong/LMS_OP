@@ -1,0 +1,32 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    align-items: center;
+}
+
+img{
+    height: 40px;
+}
+
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+li a{
+    font-size: 18px;
+    text-decoration: none;
+    color: rgb(118, 116, 116);
+}
+
+li a:hover {
+    color: #000000;
+    font-weight: bold;
+}

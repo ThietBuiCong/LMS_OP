@@ -1,0 +1,142 @@
+.containers{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 100vh;
+
+    background-image: url(../../assets/background-hcm.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+
+    color: #fff;
+}
+
+.login-form{
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 50%;
+
+    padding: 20px;
+
+    border: 1px solid rgba(255,255,255,0.3);
+
+    border-radius: 20px;
+
+    backdrop-filter: blur(30px);
+
+    color: white;
+}
+
+.login-form *{
+    box-sizing: border-box;
+}
+
+.role-select{
+    width: 70%;
+
+    padding: 12px;
+
+    margin-bottom: 20px;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background-color: rgba(0,0,0,0.7);
+
+    color: white;
+
+    border: none;
+}
+
+.input-group{
+    position: relative;
+
+    width: 70%;
+
+    margin-bottom: 30px;
+}
+
+.login-form input{
+    width: 100%;
+
+    padding: 12px 10px;
+
+    font-size: 16px;
+
+    color: white;
+
+    background: transparent;
+
+    border: none;
+    border-bottom: 1px solid #ccc;
+
+    outline: none;
+}
+
+.login-form label{
+    position: absolute;
+
+    left: 10px;
+    top: 12px;
+
+    color: #ccc;
+
+    pointer-events: none;
+
+    transition: 0.3s ease;
+}
+
+/* Khi focus hoặc có dữ liệu */
+.login-form input:focus ~ label,
+.login-form input:not(:placeholder-shown) ~ label{
+
+    top: -12px;
+
+    font-size: 13px;
+
+    color: white;
+}
+
+/* Border sáng khi focus */
+.login-form input:focus{
+    border-bottom: 2px solid white;
+}
+
+/* Chrome autofill */
+.login-form input:-webkit-autofill{
+    -webkit-text-fill-color: white;
+
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+.login-form button{
+
+    width: 70%;
+
+    padding: 12px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: black;
+
+    color: white;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.login-form button:hover{
+    background: #333;
+}
