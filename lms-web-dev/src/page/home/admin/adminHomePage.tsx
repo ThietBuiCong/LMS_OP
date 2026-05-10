@@ -3,7 +3,7 @@ import { Button, Layout, Menu } from 'antd';
 import { LeftSquareOutlined, RightSquareOutlined, UserOutlined, SettingOutlined, ContainerOutlined } from '@ant-design/icons';
 import 'tailwindcss';
 import UserManagements from './userManagement';
-
+import UserRequest from './userRequest';
 
 const { Sider, Content } = Layout;
 
@@ -46,7 +46,7 @@ function AdminHomePage() {
                 <Content>
 
                     {selectedKey === "1" && <UserManagements />}
-
+                    {selectedKey === "2" && <UserRequest />}
 
                 </Content>
             </Layout>

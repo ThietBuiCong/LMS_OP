@@ -26,7 +26,7 @@ const ModalAddUser = ({ open, onCancel, onSuccess }: ModalAddUserProps) => {
             message.error(error.message || "Thêm thất bại");
         }
     };
-    return (
+    return (  
         <Modal
             title="Thêm người dùng mới"
             open={open}
@@ -70,6 +70,16 @@ const ModalAddUser = ({ open, onCancel, onSuccess }: ModalAddUserProps) => {
                         <Select.Option value={1}>Quản trị viên (Admin)</Select.Option>
                         <Select.Option value={2}>Giảng viên (Lecture)</Select.Option>
                         <Select.Option value={3}>Người dùng thường (User)</Select.Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item
+                    name="university"
+                    label="Tên trường"
+                    initialValue={"BKU"} // Mặc định chọn Đại học Bách Khoa TP.HCM
+                >
+                    <Select placeholder="Chọn trường">
+                        <Select.Option value={"BKU"}>Đại học Bách Khoa TP.HCM</Select.Option>
+                        <Select.Option value={"IUH"}>Đại học Công nghiệp TP.HCM</Select.Option>
                     </Select>
                 </Form.Item>
             </Form>

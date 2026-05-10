@@ -1,3 +1,11 @@
+#login-page {
+    background-image: url(../../assets/background-hcm.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
 .containers{
     display: flex;
     justify-content: center;

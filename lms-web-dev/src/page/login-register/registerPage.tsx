@@ -15,7 +15,7 @@ function Register() {
             name: values.username, // Đổi username từ form thành name cho backend
             email: values.email,
             password: values.password,
-            role: values.role.toLowerCase(), // Chuyển 'Lecture' thành 'lecture' để backend nhận diện đúng
+            role: values.role, // Chuyển 'Lecture' thành 'lecture' để backend nhận diện đúng
 
             // Backend của bạn hiện tại chưa có cột class và university, 
             // nhưng bạn có thể gửi kèm để sau này dễ thêm vào DB
@@ -68,8 +68,8 @@ function Register() {
                 >
                     <Select
                         options={[
-                            { value: 'Lecture', label: 'Giảng viên' },
-                            { value: 'Student', label: 'Sinh viên' },
+                            { value: 'lecture', label: 'Giảng viên' },
+                            { value: 'student', label: 'Sinh viên' },
                         ]}
                         placeholder="Select Role"
                     />
@@ -103,7 +103,7 @@ function Register() {
                     shouldUpdate={(prevValues, currentValues) => prevValues.role !== currentValues.role}
                 >
                     {({ getFieldValue }) =>
-                        getFieldValue('role') === 'Student' ? (
+                        getFieldValue('role') === 'student' ? (
                             <Form.Item
                                 label="Class"
                                 name="class"

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BrainlyX-LMS Email</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0f;
+      font-family: 'DM Sans', sans-serif;
+      padding: 40px 16px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .email-wrapper {
+      max-width: 620px;
+      width: 100%;
+      margin: auto;
+      filter: drop-shadow(0 30px 80px rgba(0,0,0,0.6));
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: #0a0a0f;
+      border-radius: 20px 20px 0 0;
+      padding: 40px 40px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-bottom: none;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,210,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 100%, rgba(120,80,255,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .header-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    .logo-container {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 6px;
+    }
+
+    .logo-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .logo-text {
+      text-align: left;
+    }
+
+    .logo-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #63d2ff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-top: 4px;
+    }
+
+    .header-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #63d2ff, #a78bfa, transparent);
+      margin: 24px auto 0;
+      border-radius: 2px;
+    }
+
+    /* ── BADGE STRIP ── */
+    .badge-strip {
+      background: linear-gradient(135deg, #111118, #16161f);
+      border-left: 1px solid rgba(255,255,255,0.07);
+      border-right: 1px solid rgba(255,255,255,0.07);
+      padding: 10px 40px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.5px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #63d2ff;
+      box-shadow: 0 0 6px #63d2ff;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .badge-sep { color: rgba(255,255,255,0.1); }
+
+    /* ── BODY ── */
+    .body {
+      background: #ffffff;
+      padding: 44px 40px 36px;
+      border-left: 1px solid #eaeaea;
+      border-right: 1px solid #eaeaea;
+    }
+
+    .greeting {
+      font-size: 22px;
+      font-weight: 600;
+      color: #0d0d14;
+      margin-bottom: 16px;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .greeting span {
+      background: linear-gradient(135deg, #1a8cff, #7c4dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .message {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #4a4a5a;
+      margin-bottom: 24px;
+    }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight-box {
+      background: linear-gradient(135deg, #f0f7ff, #f5f0ff);
+      border: 1.5px solid #c8e0ff;
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .highlight-box::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, #1a8cff, #7c4dff);
+      border-radius: 4px 0 0 4px;
+    }
+
+    .highlight-box p {
+      font-size: 14px;
+      color: #3a3a5a;
+      line-height: 1.65;
+    }
+
+    /* ── CTA BUTTON ── */
+    .cta-wrap {
+      text-align: center;
+      margin: 32px 0;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #1a8cff 0%, #7c4dff 100%);
+      color: white !important;
+      text-decoration: none;
+      padding: 15px 40px;
+      border-radius: 100px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      box-shadow: 0 8px 24px rgba(26,140,255,0.35), 0 2px 8px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cta-btn::after {
+      content: ' →';
+      opacity: 0.8;
+      font-size: 16px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid #ebebf0;
+      margin: 24px 0;
+    }
+
+    .disclaimer {
+      font-size: 12.5px;
+      color: #9898a8;
+      line-height: 1.6;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #0a0a0f;
+      border-radius: 0 0 20px 20px;
+      padding: 28px 40px;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-top: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 120%, rgba(99,210,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, #63d2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .footer-info {
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .footer-line {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      margin-bottom: 18px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.25);
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.6); }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-grid"></div>
+      <div class="logo-container">
+        <div class="logo-icon">
+          <img src="/mnt/user-data/uploads/Logo_Primary_NoC.png" alt="BrainlyX Logo" />
+        </div>
+        <div class="logo-text">
+          <div class="logo-name">BrainlyX</div>
+          <div class="logo-sub">Learning Management System</div>
+        </div>
+      </div>
+      <div class="header-divider"></div>
+    </div>
+
+    <!-- BADGE STRIP -->
+    <div class="badge-strip">
+      <div class="badge"><span class="badge-dot"></span> Hệ thống đang hoạt động</div>
+      <div class="badge-sep">·</div>
+      <div class="badge">📬 Thông báo hệ thống</div>
+      <div class="badge-sep">·</div>
+      <div class="badge">🔒 Bảo mật xác thực</div>
+    </div>
+
+    <!-- BODY -->
+    <div class="body">
+      <p class="greeting">Xin chào, <span>${name}</span> 👋</p>
+
+      <p class="message">${content}</p>
+
+      <div class="highlight-box">
+        <p>📌 Lưu ý: Liên kết hoặc mã xác thực trong email này có hiệu lực trong vòng <strong>24 giờ</strong> kể từ thời điểm gửi. Vui lòng thực hiện thao tác sớm để tránh hết hạn.</p>
+      </div>
+
+      <div class="cta-wrap">
+        <a href="${buttonUrl}" class="cta-btn">${buttonText}</a>
+      </div>
+
+      <hr class="divider" />
+
+      <p class="disclaimer">
+        Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này —<br/>
+        tài khoản của bạn vẫn hoàn toàn an toàn.
+      </p>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-line"></div>
+      <div class="footer-inner">
+        <div class="footer-brand">BrainlyX-LMS</div>
+        <div class="footer-info">
+          © 2026 BrainlyX University. All rights reserved.<br/>
+          TP. Hồ Chí Minh, Việt Nam
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="#">Trợ giúp</a>
+        <a href="#">Chính sách bảo mật</a>
+        <a href="#">Điều khoản sử dụng</a>
+        <a href="#">Hủy đăng ký</a>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -26,6 +26,7 @@ function Login() {
 
     return (
         <div
+            id="login-page"
             style={{ backgroundImage: `url(${bgImage})` }}
             // Đã thêm class bg-fixed vào đây, và xóa các style dư thừa ở trên
             className="flex flex-col min-h-screen bg-cover bg-center bg-no-repeat bg-fixed bg-gradient-to-br from-green-50 via-white to-green-100"
