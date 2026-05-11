@@ -1,0 +1,20 @@
+/* Tự động sửa lỗi cho mọi Form trên thiết bị di động */
+@media (max-width: 768px) {
+  /* Ép Form bỏ chiều cao cố định và tự giãn theo nội dung */
+  .ant-form {
+    height: auto !important; 
+    margin: 20px auto !important; /* Thu nhỏ khoảng cách lề */
+    padding: 20px !important;    /* Thu nhỏ khoảng cách bên trong */
+  }
+
+  /* Làm cho tiêu đề nhỏ lại một chút cho cân đối */
+  .ant-form h2 {
+    font-size: 20px !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Điều chỉnh khoảng cách các ô nhập để không bị dính nhau */
+  .ant-form-item {
+    margin-bottom: 12px !important;
+  }
+}

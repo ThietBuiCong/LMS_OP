@@ -1,4 +1,4 @@
-export const approveUser = async (userId: number) => {
+export const approveUser = async (userId: string) => {
     const response = await fetch("http://localhost:5000/api/users/approve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

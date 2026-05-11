@@ -1,5 +1,4 @@
 import { Form, Input, Button, message, Select, Alert } from "antd";
-import Marquee from "react-fast-marquee";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
@@ -8,17 +7,12 @@ import "./register.css";
 function Register() {
     const navigate = useNavigate();
 
-    // Ant Design sẽ tự động chạy hàm này khi form hợp lệ
     const onFinish = async (values: any) => {
-        // Chuẩn bị payload để gửi xuống Backend
         const payload = {
-            name: values.username, // Đổi username từ form thành name cho backend
+            name: values.username,
             email: values.email,
             password: values.password,
-            role: values.role, // Chuyển 'Lecture' thành 'lecture' để backend nhận diện đúng
-
-            // Backend của bạn hiện tại chưa có cột class và university, 
-            // nhưng bạn có thể gửi kèm để sau này dễ thêm vào DB
+            role: values.role,
             className: values.class,
             university: values.university
         };
@@ -32,19 +26,17 @@ function Register() {
 
             const result = await response.json();
 
-            // Kiểm tra lỗi từ backend (ví dụ: Trùng email)
             if (!response.ok) {
                 throw new Error(result.error || "Có lỗi xảy ra khi đăng ký!");
             }
 
-            // Xử lý thông báo theo status trả về từ backend
             if (result.status === 'inactive') {
                 message.success("Đăng ký thành công! Vui lòng chờ Admin phê duyệt.");
             } else {
                 message.success("Đăng ký thành công!");
             }
 
-            navigate("/"); // Chuyển về trang đăng nhập
+            navigate("/");
         } catch (error: any) {
             message.error(error.message);
         }
@@ -53,116 +45,133 @@ function Register() {
     return (
         <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100">
             <Header />
-            <Form
-                name="basic"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                style={{ maxWidth: 600, margin: "auto", marginBlock: 50, padding: 20, backgroundColor: "white", borderRadius: 8, boxShadow: "0 10px 8px rgba(0,0,0,0.1)" }}
-                initialValues={{ role: "Student" }}
-                onFinish={onFinish} // Gọi API khi bấm Submit
-            >
-                <Form.Item
-                    label="Role"
-                    name="role"
-                    rules={[{ required: true, message: 'Please select your role!' }]}
+            
+            <div className="flex-grow flex items-center justify-center p-4">
+                <Form
+                    name="basic"
+                    layout="vertical" // QUAN TRỌNG: Chuyển sang dọc để Label nằm trên Input, cực đẹp trên mobile
+                    style={{ 
+                        width: '100%',
+                        maxWidth: 500, // Tăng lên 500 cho thoải mái không gian
+                        margin: "20px auto", 
+                        padding: "clamp(15px, 5vw, 30px)", // Padding tự co giãn
+                        backgroundColor: "white", 
+                        borderRadius: 12, 
+                        boxShadow: "0 10px 25px rgba(0,0,0,0.1)" 
+                    }}
+                    initialValues={{ role: "student" }}
+                    onFinish={onFinish}
                 >
-                    <Select
-                        options={[
-                            { value: 'lecture', label: 'Giảng viên' },
-                            { value: 'student', label: 'Sinh viên' },
+                    <h2 style={{ textAlign: 'center', marginBottom: 24, fontSize: '24px', fontWeight: 'bold' }}>
+                        Tạo tài khoản mới
+                    </h2>
+
+                    <Form.Item
+                        label="Bạn là:"
+                        name="role"
+                        rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
+                    >
+                        <Select
+                            size="large"
+                            options={[
+                                { value: 'lecture', label: 'Giảng viên' },
+                                { value: 'student', label: 'Sinh viên' },
+                            ]}
+                            placeholder="Chọn vai trò"
+                        />
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Alert
+                            message="Giảng viên cần Admin phê duyệt mới có thể đăng nhập."
+                            type="info"
+                            showIcon
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Tên đăng nhập"
+                        name="username"
+                        rules={[{ required: true, message: 'Vui lòng nhập username!' }]}
+                    >
+                        <Input placeholder="Username" size="large" />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[{ required: true, type: 'email', message: 'Email không hợp lệ!' }]}
+                    >
+                        <Input placeholder="Email" size="large" />
+                    </Form.Item>
+
+                    {/* Logic hiển thị Class chỉ cho Sinh viên */}
+                    <Form.Item
+                        noStyle
+                        shouldUpdate={(prev, curr) => prev.role !== curr.role}
+                    >
+                        {({ getFieldValue }) =>
+                            getFieldValue('role') === 'student' ? (
+                                <Form.Item
+                                    label="Lớp"
+                                    name="class"
+                                    rules={[{ required: true, message: 'Vui lòng nhập lớp!' }]}
+                                >
+                                    <Input placeholder="Ví dụ: IT02" size="large" />
+                                </Form.Item>
+                            ) : null
+                        }
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Mật khẩu"
+                        name="password"
+                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+                    >
+                        <Input.Password placeholder="Password" size="large" />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Xác nhận mật khẩu"
+                        name="confirmPassword"
+                        dependencies={['password']}
+                        rules={[
+                            { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue('password') === value) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('Mật khẩu không khớp!'));
+                                },
+                            }),
                         ]}
-                        placeholder="Select Role"
-                    />
-                </Form.Item>
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Alert
-                        message="Lưu ý: Tài khoản giảng viên sẽ cần được Admin phê duyệt trước khi có thể đăng nhập!"
-                        type="info"
-                        showIcon
-                    />
-                </Form.Item>
+                    >
+                        <Input.Password placeholder="Confirm Password" size="large" />
+                    </Form.Item>
 
-                <Form.Item
-                    label="Username"
-                    name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
-                >
-                    <Input placeholder="Username" />
-                </Form.Item>
+                    <Form.Item
+                        label="Trường đại học"
+                        name="university"
+                        rules={[{ required: true, message: 'Vui lòng chọn trường!' }]}
+                    >
+                        <Select
+                            size="large"
+                            options={[
+                                { value: 'IUH', label: 'Công nghiệp TP.HCM (IUH)' },
+                                { value: 'BKU', label: 'Bách Khoa TP.HCM (BKU)' },
+                            ]}
+                            placeholder="Chọn trường"
+                        />
+                    </Form.Item>
 
-                <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[{ required: true, type: 'email', message: 'Please input a valid email!' }]}
-                >
-                    <Input placeholder="Email" />
-                </Form.Item>
-
-                <Form.Item
-                    noStyle
-                    shouldUpdate={(prevValues, currentValues) => prevValues.role !== currentValues.role}
-                >
-                    {({ getFieldValue }) =>
-                        getFieldValue('role') === 'student' ? (
-                            <Form.Item
-                                label="Class"
-                                name="class"
-                                rules={[{ required: true, message: 'Please input your class!' }]}
-                            >
-                                <Input placeholder="Class" />
-                            </Form.Item>
-                        ) : null
-                    }
-                </Form.Item>
-
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                    <Input.Password placeholder="Password" />
-                </Form.Item>
-
-                {/* Confirm Password với logic check khớp mật khẩu trực tiếp trong Form */}
-                <Form.Item
-                    label="Confirm Password"
-                    name="confirmPassword"
-                    dependencies={['password']}
-                    rules={[
-                        { required: true, message: 'Please confirm your password!' },
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                                if (!value || getFieldValue('password') === value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
-                            },
-                        }),
-                    ]}
-                >
-                    <Input.Password placeholder="Confirm Password" />
-                </Form.Item>
-
-                <Form.Item
-                    label="University"
-                    name="university"
-                    rules={[{ required: true, message: 'Please select your university!' }]}
-                >
-                    <Select
-                        options={[
-                            { value: 'IUH', label: 'Industrial University of Ho Chi Minh' },
-                            { value: 'BKU', label: 'Ho Chi Minh University of Technology' },
-                        ]}
-                        placeholder="Select School"
-                    />
-                </Form.Item>
-
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                </Form.Item>
-            </Form>
+                    <Form.Item style={{ marginTop: 24 }}>
+                        <Button type="primary" htmlType="submit" size="large" block>
+                            Đăng ký ngay
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </div>
             <Footer />
         </div>
     );

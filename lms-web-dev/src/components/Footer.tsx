@@ -6,7 +6,7 @@ const Footer: FunctionComponent = () => {
       style={{
         background: "#0f172a",
         color: "#e5e7eb",
-        padding: "40px 20px 20px",
+        padding: "30px 20px 20px",
         marginTop: "auto",
         fontFamily: "Inter, sans-serif",
       }}
@@ -15,46 +15,27 @@ const Footer: FunctionComponent = () => {
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr",
-          gap: "20px",
+          display: "flex",
+          flexWrap: "wrap", // Tự động xuống dòng khi màn hình hẹp
+          justifyContent: "space-between",
+          gap: "30px",
         }}
       >
-        {/* Logo + Brand */}
-        <div>
-          <h2 style={{ color: "#fff", marginBottom: "10px" }}>
+        {/* Logo + Brand - Chiếm 100% trên mobile để căn giữa, hoặc tự co lại trên PC */}
+        <div style={{ flex: "1 1 300px" }}>
+          <h2 style={{ color: "#fff", marginBottom: "10px", fontSize: "22px" }}>
             BrainlyX
           </h2>
-          <p>Sản phẩm của CT Tech
-            <p>Author: Thiet Bui</p>  |
-           From: Ho Chi Minh City University</p>
+          <p style={{ margin: 0, lineHeight: "1.6" }}>
+            Sản phẩm của CT Tech <br />
+            Author: Thiet Bui | Ho Chi Minh City University
+          </p>
         </div>
 
-        {/* Product */}
-        <div>
-          <h4 style={{ color: "#fff", marginBottom: "10px" }}>Sản phẩm</h4>
-          <ul style={{ listStyle: "none", padding: 0, fontSize: "14px" }}>
-            <li>AI Learning</li>
-            <li>Courses</li>
-            <li>Flashcards</li>
-            <li>Community</li>
-          </ul>
-        </div>
-
-        {/* Company */}
-        <div>
-          <h4 style={{ color: "#fff", marginBottom: "10px" }}>Công ty</h4>
-          <ul style={{ listStyle: "none", padding: 0, fontSize: "14px" }}>
-            <li>Về chúng tôi</li>
-            <li>Tuyển dụng</li>
-            <li>Blog</li>
-          </ul>
-        </div>
-
-        {/* Contact */}
-        <div>
+        {/* Contact - Tự động nhảy xuống dưới Logo khi xem bằng điện thoại */}
+        <div style={{ flex: "1 1 200px" }}>
           <h4 style={{ color: "#fff", marginBottom: "10px" }}>Liên hệ</h4>
-          <ul style={{ listStyle: "none", padding: 0, fontSize: "14px" }}>
+          <ul style={{ listStyle: "none", padding: 0, fontSize: "14px", lineHeight: "1.8" }}>
             <li>Email: support@brainlyx.com</li>
             <li>Hotline: 0123 456 789</li>
           </ul>
@@ -65,10 +46,10 @@ const Footer: FunctionComponent = () => {
       <div
         style={{
           borderTop: "1px solid #1f2937",
-          marginTop: "30px",
+          marginTop: "20px",
           paddingTop: "15px",
           textAlign: "center",
-          fontSize: "13px",
+          fontSize: "12px",
           color: "#9ca3af",
         }}
       >

@@ -1,5 +1,24 @@
-body{
-    padding: 0px;
-    margin: 0px;
+body {
+  margin: 0;
+  padding: 0;
+;
+}
+/* 1. Tự động chuyển mọi Layout ngang thành dọc trên Mobile */
+@media (max-width: 768px) {
+  .ant-row, .flex-row {
+    flex-direction: column !important;
+  }
+  
+  /* Tự động kéo giãn các phần tử bị cố định chiều rộng */
+  .ant-card, .neo-card, div[style*="width"] {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
 
+/* 2. Tự động xử lý bảng (Table) - Vấn đề gây vỡ giao diện nặng nhất */
+.ant-table-wrapper {
+  max-width: 100vw;
+  overflow-x: auto; /* Tự động xuất hiện thanh cuộn ngang nếu bảng quá rộng */
 }

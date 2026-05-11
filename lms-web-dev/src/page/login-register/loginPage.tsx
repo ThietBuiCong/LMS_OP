@@ -3,24 +3,47 @@ import Header from "../../components/Header";
 import { Form, Input, Button, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import bgImage from "../../assets/bg-login.png";
+import axios from "axios"; // Import axios
 import "./login.css";
 
 function Login() {
     const navigate = useNavigate();
 
-    // Dùng onFinish của Ant Design sẽ giúp tự động bắt lỗi trống form (rules)
-    const onFinish = (values: any) => {
-        const { email, password } = values;
+    const onFinish = async (values: any) => {
+        try {
+            // 1. Gọi API Login
+            const response = await axios.post("http://localhost:5000/login", {
+                email: values.email,
+                password: values.password,
+            });
 
-        console.log("Email:", email);
-        console.log("Password:", password);
+            const { token, user, message: msg } = response.data;
 
-        // Demo kiểm tra tài khoản
-        if (email === "admin@gmail.com" && password === "123456") {
-            message.success("Đăng nhập thành công!");
-            navigate("/home/admin/adminHomePage");
-        } else {
-            message.error("Sai email hoặc mật khẩu");
+            // 2. Lưu thông tin vào LocalStorage để dùng cho các trang sau
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("userRole", user.role_id); // role_id từ DB (2: GV, 3: SV)
+
+            
+            message.success(msg);
+
+            // 3. Phân luồng điều hướng dựa trên role_id trong DB của bạn
+            // Dựa trên code API của bạn: Giảng viên (isLecturerRole ? 2 : 3)
+            if (user.role_id === 2 || user.role_id === "2") {
+                navigate("/home/user/lecture/lectureHomePage");
+            } else if (user.role_id === 3 || user.role_id === "3") {
+                navigate("/home/user/student/studentHomePage");
+            } else if (user.role_id === 1 || user.role_id === "1") {
+                navigate("/home/admin/adminHomePage"); // Route cho Admin nếu có
+            }
+
+        } catch (error: any) {
+            // Bắt lỗi từ Server (Sai pass, tài khoản chưa kích hoạt, v.v...)
+            if (error.response) {
+                message.error(error.response.data.error || "Đăng nhập thất bại");
+            } else {
+                message.error("Không thể kết nối đến máy chủ!");
+            }
         }
     };
 
@@ -28,71 +51,62 @@ function Login() {
         <div
             id="login-page"
             style={{ backgroundImage: `url(${bgImage})` }}
-            // Đã thêm class bg-fixed vào đây, và xóa các style dư thừa ở trên
-            className="flex flex-col min-h-screen bg-cover bg-center bg-no-repeat bg-fixed bg-gradient-to-br from-green-50 via-white to-green-100"
+            className="flex flex-col min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
         >
             <Header />
-
-            {/* Vùng bọc Form: Dùng flex để đẩy cục Form vào đúng vị trí "chính giữa" màn hình */}
-            <div className="flex-grow flex items-center justify-center">
+            <div className="flex-grow flex items-center justify-center p-4" style={{ minHeight: "50vh" }}>
                 <Form
-                    name="basic"
-                    layout="vertical" // ĐỔI SANG VERTICAL: Chữ và ô nhập sẽ ngay ngắn thẳng hàng
+                    name="login_form"
+                    layout="vertical"
                     style={{
                         width: '100%',
-                        maxWidth: 400, // Đã thu gọn bề ngang form lại một chút cho cân đối
-                        padding: 30,
-                        border: "1px solid #d9d9d9",
-                        backgroundColor: "rgba(255, 255, 255, 0.95)", // Form màu trắng hơi trong suốt
-                        borderRadius: 12, // Bo góc cho mềm mại
-                        boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-                        justifyContent: "center",
-                        height: "80vh",
-                        margin: "50px",
+                        maxWidth: 400,
+                        padding: "32px",
+                        backgroundColor: "rgba(255, 255, 255, 0.98)",
+                        borderRadius: 16,
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+                        margin: "20px auto",
                     }}
                     onFinish={onFinish}
                 >
-                    <Form.Item style={{ marginBottom: 30 }}>
-                        <h2 style={{ textAlign: "center", margin: 0, fontSize: "24px", fontWeight: "bold" }}>
-                            Đăng Nhập | BrainlyX
+                    <Form.Item>
+                        <h2 style={{ textAlign: "center", margin: 0, fontSize: "26px", fontWeight: 800 }}>
+                            ĐĂNG NHẬP
                         </h2>
+                        <p style={{ textAlign: "center", color: "#666", marginTop: 8 }}>BrainlyX System</p>
                     </Form.Item>
 
                     <Form.Item
-                        label={<span style={{ fontWeight: 500 }}>Email</span>}
+                        label={<span style={{ fontWeight: 600 }}>Email</span>}
                         name="email"
                         rules={[{ required: true, type: 'email', message: 'Vui lòng nhập email hợp lệ!' }]}
                     >
-                        <Input placeholder="Nhập email" size="large" />
+                        <Input placeholder="example@gmail.com" size="large" />
                     </Form.Item>
 
                     <Form.Item
-                        label={<span style={{ fontWeight: 500 }}>Password</span>}
+                        label={<span style={{ fontWeight: 600 }}>Mật khẩu</span>}
                         name="password"
                         rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
                     >
-                        <Input.Password placeholder="Nhập mật khẩu" size="large" />
+                        <Input.Password placeholder="••••••••" size="large" />
                     </Form.Item>
 
-                    {/* Nút đăng nhập: Thêm thuộc tính `block` để nút kéo dài 100% */}
-                    <Form.Item style={{ marginTop: 10 }}>
-                        <Button type="primary" htmlType="submit" size="large" block>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" size="large" block 
+                            style={{ height: '48px', fontWeight: 600, borderRadius: 8 }}>
                             Đăng Nhập
                         </Button>
                     </Form.Item>
 
-                    {/* Căn giữa dòng chữ "Chưa có tài khoản?" */}
                     <Form.Item style={{ marginBottom: 0, textAlign: "center" }}>
-                        <p>
-                            Chưa có tài khoản?{" "}
-                            <Link style={{ color: "#1890ff", fontWeight: 500 }} to={"/register"}>
-                                Đăng ký ngay
-                            </Link>
-                        </p>
+                        <span>Bạn chưa có tài khoản? </span>
+                        <Link style={{ color: "#1890ff", fontWeight: 600 }} to={"/register"}>
+                            Đăng ký
+                        </Link>
                     </Form.Item>
                 </Form>
             </div>
-
             <Footer />
         </div>
     );

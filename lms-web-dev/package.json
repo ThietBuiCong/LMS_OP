@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.2.2",
+    "@phosphor-icons/react": "^2.1.10",
     "@tailwindcss/vite": "^4.2.4",
     "antd": "^6.3.7",
     "axios": "^1.16.0",
+    "bcrypt": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-fast-marquee": "^1.6.5",

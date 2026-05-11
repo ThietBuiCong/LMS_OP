@@ -1,5 +1,5 @@
 // Xóa user
-export const deleteUser = async (id: number) => {
+export const deleteUser = async (id: string) => {
     const response = await fetch(`http://localhost:5000/users/${id}`, {
         method: "DELETE",
     });
