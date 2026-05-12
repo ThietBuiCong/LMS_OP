@@ -9,12 +9,15 @@ const Footer: FunctionComponent = () => {
         padding: "30px 20px 20px",
         marginTop: "auto",
         fontFamily: "Inter, sans-serif",
+        bottom: 0,
+        height: "100%"
       }}
     >
       <div
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
+          height: "100%",
           display: "flex",
           flexWrap: "wrap", // Tự động xuống dòng khi màn hình hẹp
           justifyContent: "space-between",

@@ -5,6 +5,7 @@ header {
     padding: 10px;
     align-items: center;
     position: sticky;
+    /* backdrop-filter: blur(10px); */
 }
 
 img{

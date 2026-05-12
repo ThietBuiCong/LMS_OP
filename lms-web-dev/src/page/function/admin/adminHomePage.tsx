@@ -1,18 +1,18 @@
 import { useEffect, useState, } from 'react';
 import { Button, Layout, Menu, Space, Badge } from 'antd';
-import { LeftSquareOutlined, RightSquareOutlined, UserOutlined, SettingOutlined, ContainerOutlined } from '@ant-design/icons';
+import { LeftSquareOutlined, RightSquareOutlined, UserOutlined, SettingOutlined, LogoutOutlined, ContainerOutlined } from '@ant-design/icons';
 import 'tailwindcss';
 import UserManagements from './userManagement';
 import UserRequest from './userRequest';
 import axios from 'axios';
 import { fetchUsers } from '../../../api/data/getUserInfor';
-
+import { useNavigate } from 'react-router-dom';
 
 const { Sider, Content } = Layout;
 
 
 function AdminHomePage() {
-
+    const navigate = useNavigate();
     const [pendingCount, setPendingCount] = useState(0);
     const fetchCounts = async () => {
         try {
@@ -67,7 +67,7 @@ function AdminHomePage() {
                                     </Space>
                                 )
                             },
-                            { key: '3', icon: <SettingOutlined />, label: 'Cài đặt' },
+                            { key: '3', icon: <LogoutOutlined />, label: 'Đăng xuất', onClick: () => navigate('/') },
                         ]}
                     />
                 </Sider>

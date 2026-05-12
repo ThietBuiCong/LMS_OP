@@ -12,7 +12,7 @@ function Login() {
     const onFinish = async (values: any) => {
         try {
             // 1. Gọi API Login
-            const response = await axios.post("http://localhost:5000/login", {
+            const response = await axios.post("/login", {
                 email: values.email,
                 password: values.password,
             });
@@ -24,7 +24,7 @@ function Login() {
             localStorage.setItem("user", JSON.stringify(user));
             localStorage.setItem("userRole", user.role_id); // role_id từ DB (2: GV, 3: SV)
 
-            
+
             message.success(msg);
 
             // 3. Phân luồng điều hướng dựa trên role_id trong DB của bạn
@@ -50,7 +50,11 @@ function Login() {
     return (
         <div
             id="login-page"
-            style={{ backgroundImage: `url(${bgImage})` }}
+            style={{
+                backgroundImage: `url(${bgImage})`,
+                color: "white", // 1. Đảm bảo toàn bộ thẻ div lớn có màu chữ trắng
+                minHeight: "100vh",
+            }}
             className="flex flex-col min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
         >
             <Header />
@@ -62,46 +66,69 @@ function Login() {
                         width: '100%',
                         maxWidth: 400,
                         padding: "32px",
-                        backgroundColor: "rgba(255, 255, 255, 0.98)",
                         borderRadius: 16,
                         boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
                         margin: "20px auto",
+                        backdropFilter: "blur(30px)",
+                        // 2. Thêm dòng này để màu chữ bên trong Form mặc định là trắng
+                        color: "white"
                     }}
                     onFinish={onFinish}
                 >
                     <Form.Item>
-                        <h2 style={{ textAlign: "center", margin: 0, fontSize: "26px", fontWeight: 800 }}>
+                        {/* 3. Đổi h2 sang màu trắng */}
+                        <h2 style={{ textAlign: "center", margin: 0, fontSize: "26px", fontWeight: 800, color: "white" }}>
                             ĐĂNG NHẬP
                         </h2>
-                        <p style={{ textAlign: "center", color: "#666", marginTop: 8 }}>BrainlyX System</p>
+                        {/* 4. Đổi p từ #666 sang trắng mờ (rgba trắng) để trông sang hơn */}
+                        <p style={{ textAlign: "center", color: "rgba(255, 255, 255, 0.8)", marginTop: 8 }}>BrainlyX System</p>
                     </Form.Item>
 
                     <Form.Item
-                        label={<span style={{ fontWeight: 600 }}>Email</span>}
+                        // 5. Đổi màu label thành trắng
+                        label={<span style={{ fontWeight: 600, color: "white" }}>Email</span>}
                         name="email"
                         rules={[{ required: true, type: 'email', message: 'Vui lòng nhập email hợp lệ!' }]}
                     >
-                        <Input placeholder="example@gmail.com" size="large" />
+                        <Input style={{
+                            borderRadius: 16,
+                            boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+                            backgroundColor: "rgba(255, 255, 255, 0.2)", // Làm nền nhạt hơn để chữ nổi lên
+                            backdropFilter: "blur(10px)",
+                            WebkitBackdropFilter: "blur(10px)",
+                            border: "1px solid rgba(255, 255, 255, 0.3)",
+                            color: "white", // 6. Đổi màu chữ khi gõ vào Input thành trắng
+                        }} placeholder="example@gmail.com" size="large" className="white-placeholder" />
                     </Form.Item>
 
                     <Form.Item
-                        label={<span style={{ fontWeight: 600 }}>Mật khẩu</span>}
+                        // 7. Đổi màu label thành trắng
+                        label={<span style={{ fontWeight: 600, color: "white" }}>Mật khẩu</span>}
                         name="password"
                         rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
                     >
-                        <Input.Password placeholder="••••••••" size="large" />
+                        <Input.Password style={{
+                            borderRadius: 16,
+                            boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+                            backgroundColor: "rgba(255, 255, 255, 0.2)",
+                            backdropFilter: "blur(10px)",
+                            WebkitBackdropFilter: "blur(10px)",
+                            border: "1px solid rgba(255, 255, 255, 0.3)",
+                            color: "white", // 8. Chữ trong ô mật khẩu trắng
+                        }} placeholder="••••••••" size="large" className="white-placeholder" />
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" size="large" block 
+                        <Button type="primary" htmlType="submit" size="large" block
                             style={{ height: '48px', fontWeight: 600, borderRadius: 8 }}>
                             Đăng Nhập
                         </Button>
                     </Form.Item>
 
-                    <Form.Item style={{ marginBottom: 0, textAlign: "center" }}>
+                    <Form.Item style={{ marginBottom: 0, textAlign: "center", color: "white" }}>
                         <span>Bạn chưa có tài khoản? </span>
-                        <Link style={{ color: "#1890ff", fontWeight: 600 }} to={"/register"}>
+                        {/* 9. Đổi màu Link đăng ký sang trắng hoặc xanh sáng để nổi bật */}
+                        <Link style={{ color: "#ffffff", fontWeight: 800, textDecoration: "underline" }} to={"/register"}>
                             Đăng ký
                         </Link>
                     </Form.Item>

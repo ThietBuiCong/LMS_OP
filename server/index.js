@@ -4,7 +4,11 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: '*', // Trong lúc test/deploy ban đầu hãy để '*', sau này sửa thành link Frontend thật
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 const bcrypt = require('bcrypt');
@@ -12,9 +16,10 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = '28112006';
 
+const PORT = process.env.PORT || 5000;
 // 1. Kết nối MySQL bằng Pool
 const db = mysql.createPool({
-  host: 'localhost',
+  host: process.env.DB_HOST || 'localhost',
   user: 'root',
   password: '28112006a@B',
   database: 'my_app_db',
@@ -347,6 +352,31 @@ app.post('/api/courses', async (req, res) => {
     }
 });
 
+// Đổi sang app.get và sửa syntax path
+app.get('/api/courses/detail/:courseId', async (req, res) => {
+    // Lấy id từ URL params
+    const { courseId } = req.params;
+
+    try {
+        const [rows] = await db.query(
+            "SELECT * FROM courses WHERE id = ?", 
+            [courseId]
+        );
+
+        // Kiểm tra xem có tìm thấy khóa học không
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy khóa học" });
+        }
+
+        // Trả về object đầu tiên (vì ID là duy nhất)
+        res.json(rows[0]); 
+        
+    } catch (err) {
+        console.error("Lỗi MySQL:", err);
+        res.status(500).json({ error: "Lỗi kết nối cơ sở dữ liệu" });
+    }
+});
+
 // API gửi yêu cầu xóa
 app.post('/api/courses/request-delete', async (req, res) => {
     const { id } = req.body;
@@ -411,4 +441,4 @@ const loginLimiter = rateLimit({
 
 app.use('/login', loginLimiter);
 
-app.listen(5000, () => console.log('🚀 Server chạy tại http://localhost:5000'));
+app.listen(PORT, () => console.log(`Server chạy tại cổng ${PORT}`));
