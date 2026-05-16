@@ -61,12 +61,15 @@ db.getConnection()
 // 2. Cấu hình Nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Sử dụng SSL/TLS chính thống để tránh bị Render chặn
   auth: {
     user: 'lmsbrainlyx@gmail.com', 
-    pass: 'xyij lbvm trgo ljwg'     
+    pass: 'xyij lbvm trgo ljwg' // Đảm bảo mật khẩu ứng dụng 16 ký tự này vẫn còn hiệu lực
   },
   tls: {
-    rejectUnauthorized: false 
+    rejectUnauthorized: false // Giúp tương thích cả máy local và server cloud
   }
 });
 
