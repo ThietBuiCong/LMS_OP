@@ -72,6 +72,13 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false // Giúp tương thích cả máy local và server cloud
   }
 });
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('❌ Lỗi cấu hình Nodemailer (Mật khẩu ứng dụng có thể đã hết hạn):', error.message);
+  } else {
+    console.log('📧 Nodemailer đã sẵn sàng gửi thư thông báo!');
+  }
+});
 
 // Hàm mẫu Email HTML
 const emailTemplate = (name, content, buttonText, buttonUrl) => {
@@ -216,57 +223,71 @@ app.post('/register', async (req, res) => {
 
     res.status(201).json({ message: "Đăng ký thành công!", id: customId, status });
 
+    // FIX: Bọc xử lý độc lập để tránh lỗi gửi mail làm sập cả cụm tiến trình đăng ký
     let mailContent = isLecturerRole ? "Tài khoản Giảng viên đang chờ Admin phê duyệt thủ công." : "Tài khoản Sinh viên đã kích hoạt thành công.";
     transporter.sendMail({
-      from: '"BrainlyX" <lmsbrainlyx@gmail.com>',
+      from: '"BrainlyX LMS" <lmsbrainlyx@gmail.com>',
       to: email,
       subject: 'Thông báo trạng thái đăng ký tài khoản',
       html: emailTemplate(name, mailContent, "Truy cập hệ thống", "http://localhost:5173")
-    }).catch(err => console.error("Lỗi gửi mail hệ thống:", err.message));
+    }).catch(err => console.error("❌ Lỗi gửi mail tự động khi đăng ký:", err.message));
 
   } catch (err) {
     res.status(500).json({ error: "Lỗi hệ thống khi đăng ký" });
   }
 });
 
+// FIX TRIỆT ĐỂ API PHÊ DUYỆT (APPROVE)
 app.post('/api/users/approve', async (req, res) => {
   const { id } = req.body;
   try {
     const [users] = await db.query("SELECT email, name FROM users WHERE id = ?", [id]);
-    if (users.length === 0) return res.status(404).json({ error: "User không tồn tại" });
+    if (users.length === 0) return res.status(404).json({ error: "Người dùng không tồn tại trên hệ thống" });
 
+    // Thực hiện cập nhật trạng thái trong Database trước để đảm bảo dữ liệu luôn đúng
     await db.query("UPDATE users SET status = 'active' WHERE id = ?", [id]);
 
-    await transporter.sendMail({
+    // Tiến hành gửi email thông báo ngầm, nếu lỗi mail thì client vẫn nhận được phản hồi duyệt thành công
+    transporter.sendMail({
       from: '"Hệ Thống LMS BrainlyX" <lmsbrainlyx@gmail.com>',
       to: users[0].email,
       subject: 'Tài khoản Giảng viên đã được kích hoạt',
-      html: emailTemplate(users[0].name, "Tài khoản giảng viên của bạn đã được phê duyệt.", "Đăng nhập ngay", "http://localhost:5173/login")
-    });
+      html: emailTemplate(users[0].name, "Tài khoản giảng viên của bạn đã được phê duyệt. Bạn có thể đăng nhập vào hệ thống ngay bây giờ.", "Đăng nhập ngay", "http://localhost:5173/login")
+    })
+    .then(() => console.log(`🚀 Đã gửi mail phê duyệt thành công cho: ${users[0].email}`))
+    .catch(mailErr => console.error("⚠️ Khách hàng đã được duyệt nhưng không gửi được email thông báo:", mailErr.message));
 
-    res.json({ success: true, message: "Đã phê duyệt và gửi mail thành công!" });
+    return res.json({ success: true, message: "Đã phê duyệt tài khoản giảng viên thành công!" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Lỗi API Approve:", error.message);
+    return res.status(500).json({ error: "Lỗi hệ thống khi thực hiện phê duyệt" });
   }
 });
 
+// FIX TRIỆT ĐỂ API TỪ CHỐI DUYỆT (REJECT)
 app.post('/api/users/reject', async (req, res) => {
   const { id } = req.body;
   try {
     const [users] = await db.query("SELECT email, name FROM users WHERE id = ?", [id]);
-    if (users.length === 0) return res.status(404).json({ error: "User không tồn tại" });
+    if (users.length === 0) return res.status(404).json({ error: "Người dùng không tồn tại trên hệ thống" });
 
-    await transporter.sendMail({
+    // Thực hiện xóa bản ghi đăng ký tạm thời khỏi hệ thống
+    await db.query("DELETE FROM users WHERE id = ?", [id]);
+
+    // Tiến hành gửi email từ chối
+    transporter.sendMail({
       from: '"Hệ Thống LMS BrainlyX" <lmsbrainlyx@gmail.com>',
       to: users[0].email,
       subject: 'Thông báo kết quả đăng ký tài khoản',
-      html: emailTemplate(users[0].name, "Yêu cầu đăng ký đã bị từ chối.", "Liên hệ hỗ trợ", "mailto:lmsbrainlyx@gmail.com")
-    });
+      html: emailTemplate(users[0].name, "Yêu cầu đăng ký giảng viên của bạn đã bị từ chối. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.", "Liên hệ hỗ trợ", "mailto:lmsbrainlyx@gmail.com")
+    })
+    .then(() => console.log(`🚀 Đã gửi mail từ chối cho: ${users[0].email}`))
+    .catch(mailErr => console.error("⚠️ Đã xóa bản ghi duyệt nhưng lỗi luồng gửi mail từ chối:", mailErr.message));
 
-    await db.query("DELETE FROM users WHERE id = ?", [id]);
-    res.json({ success: true, message: "Đã từ chối và xóa bản ghi chờ duyệt." });
+    return res.json({ success: true, message: "Đã từ chối yêu cầu đăng ký và dọn dẹp bản ghi thành công!" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Lỗi API Reject:", error.message);
+    return res.status(500).json({ error: "Lỗi hệ thống khi thực hiện từ chối" });
   }
 });
 
