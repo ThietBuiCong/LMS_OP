@@ -268,26 +268,38 @@ app.post('/api/users/approve', async (req, res) => {
 app.post('/api/users/reject', async (req, res) => {
   const { id } = req.body;
   try {
+    // Bước 1: Kiểm tra xem user có tồn tại không
     const [users] = await db.query("SELECT email, name FROM users WHERE id = ?", [id]);
-    if (users.length === 0) return res.status(404).json({ error: "Người dùng không tồn tại trên hệ thống" });
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, error: "Không tìm thấy User này trong hệ thống!" });
+    }
 
-    // Thực hiện xóa bản ghi đăng ký tạm thời khỏi hệ thống
-    await db.query("DELETE FROM users WHERE id = ?", [id]);
+    // Bước 2: THỰC HIỆN XÓA CỨNG TRONG DB TRƯỚC!
+    const [result] = await db.query("DELETE FROM users WHERE id = ?", [id]);
+    
+    // Kiểm tra thực tế xem MySQL có thực sự xóa được dòng nào không
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ success: false, error: "Lỗi hệ thống, chưa thể xóa dữ liệu!" });
+    }
 
-    // Tiến hành gửi email từ chối
+    // Bước 3: Trả về kết quả thành công cho Frontend lập tức để giao diện không bị xoay chờ
+    res.json({ success: true, message: "Đã từ chối và xóa tài khoản giảng viên thành công!" });
+
+    // Bước 4: Chạy gửi mail ngầm (Bỏ await luồng này để nếu lỗi mail cũng không làm ảnh hưởng kết quả DB)
     transporter.sendMail({
       from: '"Hệ Thống LMS BrainlyX" <lmsbrainlyx@gmail.com>',
       to: users[0].email,
       subject: 'Thông báo kết quả đăng ký tài khoản',
       html: emailTemplate(users[0].name, "Yêu cầu đăng ký giảng viên của bạn đã bị từ chối. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.", "Liên hệ hỗ trợ", "mailto:lmsbrainlyx@gmail.com")
     })
-    .then(() => console.log(`🚀 Đã gửi mail từ chối cho: ${users[0].email}`))
-    .catch(mailErr => console.error("⚠️ Đã xóa bản ghi duyệt nhưng lỗi luồng gửi mail từ chối:", mailErr.message));
+    .then(() => console.log(`Đã gửi mail thông báo từ chối đến: ${users[0].email}`))
+    .catch(mailErr => console.error("Đã xóa user trong DB nhưng luồng gửi mail bị lỗi:", mailErr.message));
 
-    return res.json({ success: true, message: "Đã từ chối yêu cầu đăng ký và dọn dẹp bản ghi thành công!" });
   } catch (error) {
     console.error("❌ Lỗi API Reject:", error.message);
-    return res.status(500).json({ error: "Lỗi hệ thống khi thực hiện từ chối" });
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Lỗi hệ thống khi thực hiện từ chối user" });
+    }
   }
 });
 
@@ -307,10 +319,18 @@ app.put('/api/users/:id', async (req, res) => {
 app.delete('/users/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await db.query('DELETE FROM users WHERE id = ?', [id]);
-    res.json({ message: "Xóa người dùng thành công!" });
+    // Chạy lệnh xóa cứng
+    const [result] = await db.query('DELETE FROM users WHERE id = ?', [id]);
+    
+    // Kiểm tra số dòng thực tế bị tác động (affectedRows)
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, error: "Không tìm thấy user có ID này để xóa!" });
+    }
+    
+    return res.json({ success: true, message: "Xóa người dùng khỏi Database thành công!" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Lỗi API Delete User:", err.message);
+    return res.status(500).json({ error: "Lỗi kết nối cơ sở dữ liệu khi xóa" });
   }
 });
 
