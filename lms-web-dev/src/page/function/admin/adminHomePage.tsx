@@ -1,6 +1,6 @@
 import { useEffect, useState, } from 'react';
 import { Button, Layout, Menu, Space, Badge } from 'antd';
-import { LeftSquareOutlined, RightSquareOutlined, UserOutlined, SettingOutlined, LogoutOutlined, ContainerOutlined } from '@ant-design/icons';
+import { LeftSquareOutlined, RightSquareOutlined, UserOutlined, LogoutOutlined, ContainerOutlined } from '@ant-design/icons';
 import 'tailwindcss';
 import UserManagements from './userManagement';
 import UserRequest from './userRequest';
@@ -21,7 +21,7 @@ function AdminHomePage() {
             const uCount = users.filter((u: any) => u.status === 'inactive' && u.role_id === 2).length;
 
             // Lấy course pending
-            const courseRes = await axios.get("http://localhost:5000/api/admin/course-requests");
+            const courseRes = await axios.get("/api/admin/course-requests");
             const cCount = courseRes.data.length;
 
             setPendingCount(uCount + cCount);

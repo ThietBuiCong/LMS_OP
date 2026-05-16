@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Table, Button, Tooltip, Tag, Space, Badge, Popconfirm, message, Input, type InputRef } from 'antd';
+import { Table, Button, Tooltip, Tag, Space, Popconfirm, message, Input, type InputRef } from 'antd';
 import {
     PlusSquareTwoTone,
     MinusSquareTwoTone,
@@ -40,9 +40,6 @@ function UserManagements() {
         setIsEditModalOpen(true);
     };
     
-    // Search states
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef<InputRef>(null);
 
     const loadUsers = useCallback(async () => {
@@ -72,20 +69,16 @@ function UserManagements() {
         }
     };
 
-    // Hàm xử lý tìm kiếm trên từng cột
     const handleSearch = (
         selectedKeys: string[],
         confirm: (param?: FilterConfirmProps) => void,
         dataIndex: DataIndex,
     ) => {
         confirm();
-        setSearchText(selectedKeys[0]);
-        setSearchedColumn(dataIndex);
     };
 
     const handleReset = (clearFilters: () => void) => {
         clearFilters();
-        setSearchText('');
     };
 
     const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<User> => ({

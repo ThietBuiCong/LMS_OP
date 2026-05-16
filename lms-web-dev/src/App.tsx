@@ -3,9 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './page/login-register/loginPage.tsx';
 import AdminHomePage from './page/function/admin/adminHomePage.tsx';
 import Register from './page/login-register/registerPage.tsx';
-import LectureHomePage from './page/function/user/lecture/lecturePageHome.tsx';
 import { ConfigProvider } from 'antd';
 import CourseDetail from './page/function/course/courseInformation.tsx';
+import UserHomePage from './page/function/user/userPageHome.tsx';
+import CourseDetailForStudent from './page/function/course/courseInforStudent.tsx';
 function App() {
   return (
     // 1. ConfigProvider bọc ngoài cùng để áp đặt style cho toàn bộ App
@@ -32,9 +33,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/home/admin/adminHomePage" element={<AdminHomePage />} />
-          <Route path="/home/user/lecture/lectureHomePage" element={<LectureHomePage />} />
+          <Route path="/home/user/userHomePage" element={<UserHomePage />} />
+          {/* <Route path="/home/user/student/studentHomePage" element={<StudentHomePage />} /> */}
           <Route path="/register" element={<Register />} />
           <Route path="/course/:courseId" element={<CourseDetail />} />
+          <Route path="/home/user/student/course/:courseId" element={<CourseDetailForStudent />} />
         </Routes>
       </Router>
     </ConfigProvider>

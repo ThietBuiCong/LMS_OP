@@ -22,7 +22,7 @@ const ModalEditUser = ({ open, onCancel, onSuccess, userData }: Props) => {
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            await axios.put(`http://localhost:5000/api/users/${userData.id}`, values);
+            await axios.put(`/api/users/${userData.id}`, values);
             message.success("Cập nhật thông tin thành công!");
             onSuccess();
             onCancel();

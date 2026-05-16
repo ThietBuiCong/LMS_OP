@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { Table, Button, Tag, Space, Popconfirm, message, Card, Typography, Divider } from 'antd';
+import { Table, Button, Tag, Space, Popconfirm, message, Card, Typography } from 'antd';
 import { CheckOutlined, CloseOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import { fetchUsers } from "../../../api/data/getUserInfor";
 import { approveUser } from "../../../api/data/approveUser";
 import { deleteUser } from "../../../api/data/deleteUserInfor";
 import axios from "axios";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 interface User {
     id: string;
@@ -41,7 +41,7 @@ function UserRequest() {
             setUserRequests(pendingLecturers);
 
             // 2. Load Course Delete Requests
-            const courseRes = await axios.get("http://localhost:5000/api/admin/course-requests");
+            const courseRes = await axios.get("/api/admin/course-requests");
             setCourseRequests(courseRes.data);
         } catch (error) {
             message.error("Lỗi tải dữ liệu yêu cầu");
@@ -73,7 +73,7 @@ function UserRequest() {
     // Xử lý Course
     const handleProcessCourse = async (id: number, action: 'approve' | 'reject') => {
         try {
-            await axios.post("http://localhost:5000/api/admin/course-process", { id, action });
+            await axios.post("/api/admin/course-process", { id, action });
             message.success(action === 'approve' ? "Đã xóa khóa học" : "Đã hủy yêu cầu xóa");
             loadAllRequests();
         } catch (error) { message.error("Lỗi xử lý"); }

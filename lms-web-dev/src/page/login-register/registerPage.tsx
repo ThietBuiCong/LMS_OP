@@ -1,5 +1,6 @@
 import { Form, Input, Button, message, Select, Alert } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import "./register.css";
@@ -9,6 +10,7 @@ function Register() {
 
     const onFinish = async (values: any) => {
         const payload = {
+            id: values.id,
             name: values.username,
             email: values.email,
             password: values.password,
@@ -16,19 +18,10 @@ function Register() {
             className: values.class,
             university: values.university
         };
-
+        console.log("Payload đăng ký:", payload);
         try {
-            const response = await fetch("http://localhost:5000/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || "Có lỗi xảy ra khi đăng ký!");
-            }
+            const response = await axios.post("/register", payload);
+            const result = response.data;
 
             if (result.status === 'inactive') {
                 message.success("Đăng ký thành công! Vui lòng chờ Admin phê duyệt.");
@@ -38,26 +31,26 @@ function Register() {
 
             navigate("/");
         } catch (error: any) {
-            message.error(error.message);
+            message.error(error.response?.data?.error || error.message);
         }
     };
 
     return (
         <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100">
             <Header />
-            
+
             <div className="flex-grow flex items-center justify-center p-4">
                 <Form
                     name="basic"
                     layout="vertical" // QUAN TRỌNG: Chuyển sang dọc để Label nằm trên Input, cực đẹp trên mobile
-                    style={{ 
+                    style={{
                         width: '100%',
                         maxWidth: 500, // Tăng lên 500 cho thoải mái không gian
-                        margin: "20px auto", 
+                        margin: "20px auto",
                         padding: "clamp(15px, 5vw, 30px)", // Padding tự co giãn
-                        backgroundColor: "white", 
-                        borderRadius: 12, 
-                        boxShadow: "0 10px 25px rgba(0,0,0,0.1)" 
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
                     }}
                     initialValues={{ role: "student" }}
                     onFinish={onFinish}
@@ -88,9 +81,24 @@ function Register() {
                             showIcon
                         />
                     </Form.Item>
-
                     <Form.Item
-                        label="Tên đăng nhập"
+                        noStyle
+                        shouldUpdate={(prev, curr) => prev.role !== curr.role}
+                    >
+                        {({ getFieldValue }) =>
+                            getFieldValue('role') === 'student' ? (
+                                <Form.Item
+                                    label="Mã số sinh viên"
+                                    name="id"
+                                    rules={[{ required: true, message: 'Vui lòng nhập mã số sinh viên!' }]}
+                                >
+                                    <Input placeholder="Ví dụ: SV001" size="large" />
+                                </Form.Item>
+                            ) : null
+                        }
+                    </Form.Item>
+                    <Form.Item
+                        label="Họ Tên"
                         name="username"
                         rules={[{ required: true, message: 'Vui lòng nhập username!' }]}
                     >
