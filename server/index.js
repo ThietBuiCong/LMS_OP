@@ -108,11 +108,11 @@ const emailTemplate = (name, content, buttonText, buttonUrl) => {
   `;
 };
 
-// Cấu hình giới hạn Đăng nhập sai (Anti Brute-force)
+// Sửa lại đoạn này trong code Backend của bạn:
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 5, 
-  message: { error: "Quá nhiều lần thử đăng nhập sai, vui lòng quay lại sau 15 phút." }
+  windowMs: 10 * 1000, // 10 giây (Thay vì 15 phút như cũ)
+  max: 100,            // Cho phép thử tối đa 100 lần trong 10 giây
+  message: { error: "Thử lại quá nhanh! Vui lòng đợi 10 giây." }
 });
 
 // --- CẤU HÌNH MULTER ĐỂ LƯU TRỮ FILE BÀI GIẢNG ---
