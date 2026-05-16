@@ -24,9 +24,10 @@ const PORT = process.env.PORT || 5000;
 // 1. Kết nối MySQL bằng Pool
 const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
-  user: 'root',
-  password: '28112006a@B',
-  database: 'my_app_db',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '28112006a@B',
+  database: process.env.DB_NAME || 'my_app_db',
+  port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 100
 });
